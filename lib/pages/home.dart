@@ -21,7 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   FirebaseAuth auth = FirebaseAuth.instance;
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
-  String _email ="none";
+  String _email = "none";
   late bool loggedIn;
 
   currentUser() {
@@ -43,6 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
     currentUser();
     super.initState();
   }
+
   var refreshKey = GlobalKey<RefreshIndicatorState>();
   final _fire = FirebaseFirestore.instance;
   @override
@@ -136,6 +137,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           loggedIn = true;
                           _email = value.email!;
                         });
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text("Logged in successfully"),
+                          duration: Duration(seconds: 5),
+                          backgroundColor: Colors.green,
+                        ));
                       } else {
                         print("error");
                       }
@@ -169,7 +175,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ));
         },
       ),
-      body: StreamBuilder<QuerySnapshot>(
+      body: _email != "none"
+          ? StreamBuilder<QuerySnapshot>(
               stream: _fire.collection("movies").snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
@@ -209,57 +216,67 @@ class _HomeScreenState extends State<HomeScreen> {
                                   color: Colors.black,
                                   child: const Center(
                                       child: Text(
-                                        "Movies Watched!!",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            // backgroundColor: Colors.black,
-                                            fontSize: 20),
-                                      )),
+                                    "Movies Watched!!",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        // backgroundColor: Colors.black,
+                                        fontSize: 20),
+                                  )),
                                 ),
-
                                 SingleChildScrollView(
                                   child: Container(
-                                    height: MediaQuery.of(context).size.height * 0.8,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.8,
                                     child: ListView.builder(
                                         shrinkWrap: true,
                                         physics: const ScrollPhysics(),
                                         itemCount: documents.length,
                                         itemBuilder: (context, index) {
-                                          DocumentSnapshot data = documents[index];
+                                          DocumentSnapshot data =
+                                              documents[index];
 
                                           return Container(
-                                              padding: const EdgeInsets.symmetric(
-                                                  horizontal: 15, vertical: 15),
-                                              margin: const EdgeInsets.symmetric(
-                                                  horizontal: 15, vertical: 10),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 15,
+                                                      vertical: 15),
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 15,
+                                                      vertical: 10),
                                               decoration: BoxDecoration(
                                                 borderRadius:
                                                     BorderRadius.circular((20)),
-                                                color:
-                                                    Colors.white.withOpacity(0.7),
+                                                color: Colors.white
+                                                    .withOpacity(0.7),
                                               ),
                                               height: MediaQuery.of(context)
                                                       .size
                                                       .height *
                                                   0.3,
-                                              width:
-                                                  MediaQuery.of(context).size.width,
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
                                               child: Column(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 mainAxisAlignment:
-                                                    MainAxisAlignment.spaceBetween,
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
                                                 children: [
                                                   Container(
-                                                    margin: EdgeInsets.symmetric(
-                                                        horizontal: 10),
-                                                    height: MediaQuery.of(context)
+                                                    margin:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 10),
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                            0.2,
+                                                    width:
+                                                        MediaQuery.of(context)
                                                             .size
-                                                            .height *
-                                                        0.2,
-                                                    width: MediaQuery.of(context)
-                                                        .size
-                                                        .width,
+                                                            .width,
                                                     child: Image.network(
                                                         data['moviePoster']),
                                                   ),
@@ -274,18 +291,28 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                 .start,
                                                         children: [
                                                           Container(
-                                                            width:MediaQuery.of(context).size.width* 0.7,
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.7,
                                                             child: Text(
                                                               "Title : " +
-                                                                  data["movieName"],
-                                                              overflow: TextOverflow.ellipsis,
+                                                                  data[
+                                                                      "movieName"],
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
                                                               style: TextStyle(
                                                                 fontStyle:
-                                                                    FontStyle.italic,
+                                                                    FontStyle
+                                                                        .italic,
                                                                 fontSize: 20,
                                                                 fontWeight:
-                                                                    FontWeight.bold,
-                                                                color: Colors.black,
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color: Colors
+                                                                    .black,
                                                               ),
                                                             ),
                                                           ),
@@ -298,9 +325,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .normal,
-                                                                color: Colors.black,
-                                                                fontStyle: FontStyle
-                                                                    .italic),
+                                                                color: Colors
+                                                                    .black,
+                                                                fontStyle:
+                                                                    FontStyle
+                                                                        .italic),
                                                           )
                                                         ],
                                                       ),
@@ -312,9 +341,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         ),
                                                         onPressed: () {
                                                           _fire
-                                                              .collection('movies')
-                                                              .doc(
-                                                                  data["movieName"])
+                                                              .collection(
+                                                                  'movies')
+                                                              .doc(data[
+                                                                  "movieName"])
                                                               .delete();
                                                         },
                                                       )
@@ -358,7 +388,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: Column(
                                 children: [
                                   Container(
-                                    padding: EdgeInsets.only(top: 20, bottom: 10),
+                                    padding:
+                                        EdgeInsets.only(top: 20, bottom: 10),
                                     color: Colors.black,
                                     child: const Center(
                                         child: Text(
@@ -370,68 +401,95 @@ class _HomeScreenState extends State<HomeScreen> {
                                     )),
                                   ),
                                   SizedBox(
-                                    height: MediaQuery.of(context).size.height * 0.25,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.25,
                                   ),
-                                  _email!="none"
+                                  _email != "none"
                                       ? Text(
-                                    "Add movies to display them in list",
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.normal,
-                                    fontStyle: FontStyle.italic),
-                                  )
-                                  : Text(
-                                    "Login to add/display moview",
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.normal,
-                                        fontStyle: FontStyle.italic),
-                                  ),
+                                          "Add movies to display them in list",
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.normal,
+                                              fontStyle: FontStyle.italic),
+                                        )
+                                      : Text(
+                                          "Login to add/display moview",
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.normal,
+                                              fontStyle: FontStyle.italic),
+                                        ),
                                 ],
                               ),
                             ),
                           ],
                         );
                 } else {
-                  return Stack(
-                    children: [
-                      Container(
-                        color: Colors.black,
-                        padding: const EdgeInsets.only(bottom: 100),
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            image: DecorationImage(
-                              image: ExactAssetImage(
-                                  'assets/images/login_background.jpg'),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.blue.withOpacity(0.0)),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 15, vertical: 15),
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 30, vertical: 30),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular((20)),
-                          color: Colors.grey.withOpacity(0.7),
-                        ),
-                        height: MediaQuery.of(context).size.height * 0.25,
-                        width: MediaQuery.of(context).size.width,
-                        child: Text("Welcome to the Movies List"),
-                      )
-                    ],
-                  );
+                  return Center(child: CircularProgressIndicator());
                 }
               },
+            )
+          : Stack(
+              children: [
+                Container(
+                  color: Colors.black,
+                  padding: const EdgeInsets.only(bottom: 100),
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      image: DecorationImage(
+                        image: ExactAssetImage(
+                            'assets/images/login_background.jpg'),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                      child: Container(
+                        decoration:
+                            BoxDecoration(color: Colors.black.withOpacity(0.0)),
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  // padding: EdgeInsets.only(top: 20),
+                  width: MediaQuery.of(context).size.width,
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.only(top: 20, bottom: 10),
+                        color: Colors.black,
+                        child: const Center(
+                            child: Text(
+                          "Movies Watched!!",
+                          style: TextStyle(
+                              color: Colors.white,
+                              // backgroundColor: Colors.black,
+                              fontSize: 20),
+                        )),
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.25,
+                      ),
+                      _email != "none"
+                          ? Text(
+                              "Add movies to display them in list",
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.normal,
+                                  fontStyle: FontStyle.italic),
+                            )
+                          : Text(
+                              "Login to add/display moview",
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.normal,
+                                  fontStyle: FontStyle.italic),
+                            ),
+                    ],
+                  ),
+                ),
+              ],
             ),
     );
   }
